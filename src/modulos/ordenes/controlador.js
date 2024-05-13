@@ -1,4 +1,6 @@
 const TABLA = 'ordenes';
+const {EventEmitter} = require('events');
+const eventEmitter = new EventEmitter();
 
 module.exports = function(dbInyectada){
     
@@ -43,7 +45,8 @@ module.exports = function(dbInyectada){
             servicio_id: servicio.insertId,// Utiliza el ID del servicio insertado
             estado: 'en curso'
           });
-      
+
+
           console.log('Orden creada correctamente:', orden);
           res.status(200).send('Datos recibidos y guardados correctamente');
         } catch (error) {
@@ -51,6 +54,37 @@ module.exports = function(dbInyectada){
           res.status(500).send('Error al procesar la orden');
         }
       }
+
+      actualizarEstadoOrden = async (req, res) => {
+        const { orderId, newStatus } = req.body;
+    
+        try {
+            // Actualizar el estado de la orden en la base de datos
+            await db.actualizarEstadoOrden('ordenes', { estado: newStatus }, { id: orderId });
+    
+            console.log('Estado de la orden actualizado correctamente');
+            res.status(200).send('Estado de la orden actualizado correctamente');
+        } catch (error) {
+            console.error('Error al actualizar el estado de la orden:', error);
+            res.status(500).send('Error al actualizar el estado de la orden');
+        }
+    };
+
+    asignarEmpleado = async (req, res) => {
+      const { orderId, nombreEmpleado } = req.body;
+  
+      try {
+          // Actualizar el estado de la orden en la base de datos
+          await db.actualizarEstadoOrden('ordenes', { empleado: nombreEmpleado }, { id: orderId });
+  
+          console.log('Empleado asignado correctamente');
+          res.status(200).send('Empleado asignado correctamente');
+      } catch (error) {
+          console.error('Error al asignar empleado:', error);
+          res.status(500).send('Error al asignar empleado');
+      }
+  };
+      
 
 
     function todos () {
@@ -85,7 +119,9 @@ module.exports = function(dbInyectada){
         uno,
         // agregar,
         // eliminar,
-        crearOrden
+        crearOrden,
+        actualizarEstadoOrden,
+        asignarEmpleado
     }
 
 }

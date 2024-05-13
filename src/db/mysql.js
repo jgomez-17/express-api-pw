@@ -85,11 +85,29 @@ function eliminar (tabla, data) {
      });
 }
 
+// function actualizar(tabla, datosActualizados, condicion) {
+//     return new Promise((resolve, reject) => {
+//         conexion.query(`UPDATE ${tabla} SET ? WHERE ?`, [datosActualizados, condicion], (error, result) => {
+//             return error ? reject(error) : resolve(result);
+//         });
+//     });
+// }
+
+function actualizarEstadoOrden(tabla, datosActualizados, condicion) {
+    return new Promise((resolve, reject) => {
+        conexion.query(`UPDATE ${tabla} SET ? WHERE ?`, [datosActualizados, condicion], (error, result) => {
+            return error ? reject(error) : resolve(result);
+        });
+    });
+}
+
+
 module.exports = {
     todos,
     uno,
     agregar,
     eliminar,
     query,
-    queryEstados
+    queryEstados,
+    actualizarEstadoOrden
 }

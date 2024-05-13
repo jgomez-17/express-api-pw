@@ -9,6 +9,8 @@ const router = express.Router();
 router.get('/', todos);
 router.get('/:id', uno);
 router.post('/', controlador.crearOrden);
+router.post('/actualizarestado', controlador.actualizarEstadoOrden)
+router.post('/asignarempleado', controlador.asignarEmpleado)
 // router.put('/', eliminar);
   
 

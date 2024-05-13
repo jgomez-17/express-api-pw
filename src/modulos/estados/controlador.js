@@ -43,6 +43,7 @@ module.exports = function(dbInyectada){
                 respuesta.ordenes.push({
                     id: orden.id,
                     fechaOrden: orden.fecha_orden,
+                    estado: orden.estado,
                     cliente: cliente[0],
                     vehiculo: vehiculo[0],
                     servicio: servicio[0]

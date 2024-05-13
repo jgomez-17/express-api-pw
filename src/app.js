@@ -1,3 +1,5 @@
+// const http = require('http');
+// const socketIo = require('socket.io');
 const express = require('express');
 const config = require('./config');
 const morgan  = require('morgan');
@@ -14,6 +16,9 @@ const estados = require('./modulos/estados/rutas')
 
 const app = express();
 
+//Socket.io
+// const server = http.createServer(app);
+// const io = socketIo(server);
 
 var corsOptions = {
     origin: "*",
