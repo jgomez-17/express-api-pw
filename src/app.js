@@ -1,5 +1,5 @@
-// const http = require('http');
-// const socketIo = require('socket.io');
+const http = require('http');
+const socketIo = require('socket.io');
 const express = require('express');
 const config = require('./config');
 const morgan  = require('morgan');
@@ -17,8 +17,17 @@ const estados = require('./modulos/estados/rutas')
 const app = express();
 
 //Socket.io
-// const server = http.createServer(app);
-// const io = socketIo(server);
+const server = http.createServer(app);
+const io = socketIo(server);
+
+// Conexión a Socket.io
+io.on('connection', (socket) => {
+    console.log('Nuevo cliente conectado');
+
+    socket.on('disconnect', () => {
+        console.log('Cliente desconectado');
+    });
+});
 
 var corsOptions = {
     origin: "*",

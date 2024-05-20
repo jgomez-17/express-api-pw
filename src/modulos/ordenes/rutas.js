@@ -1,5 +1,4 @@
 const express = require('express');
-
 const respuesta = require('../../red/respuestas');
 const controlador = require('./index');
 
@@ -10,7 +9,9 @@ router.get('/', todos);
 router.get('/:id', uno);
 router.post('/', controlador.crearOrden);
 router.post('/actualizarestado', controlador.actualizarEstadoOrden)
-router.post('/asignarempleado', controlador.asignarEmpleado)
+router.post('/actualizarestado2', controlador.actualizarEstadoOrden2)
+
+// router.post('/asignarempleado', controlador.asignarEmpleado)
 // router.put('/', eliminar);
   
 

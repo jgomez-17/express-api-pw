@@ -13,6 +13,8 @@ module.exports = function(dbInyectada){
         return db.todos(TABLA);
     }
 
+
+    //estado EN CURSO
     async function enCurso(req, res, next) {
         const estado = 'en curso';
     
@@ -58,41 +60,99 @@ module.exports = function(dbInyectada){
             next(error);
         }
     }
-    
-    // function enCurso (req, res, next) {
-    //     const tabla = 'ordenes'
-    //     const consulta = { estado: 'en curso' };
-    //     db.queryEstados(tabla, consulta)
-    //         .then(items => {
-    //             respuesta.success(req, res, items, 200);
-    //         })
-    //         .catch(err => {
-    //             next(err);
-    //         });
-    // }
 
-    function porPagar (req, res, next) {
-        const tabla = 'ordenes'
-        const consulta = { estado: 'por pagar' };
-        db.queryEstados(tabla, consulta)
-            .then(items => {
-                respuesta.success(req, res, items, 200);
-            })
-            .catch(err => {
-                next(err);
-            });
+    //estado POR PAGAR
+    async function porPagar (req, res, next) {
+        const estado = 'por pagar';
+    
+        try {
+            // Consultar las órdenes en curso
+            const ordenesPorPagar = await db.query('ordenes', { estado });
+    
+            // Verificar si hay órdenes en curso
+            if (!ordenesPorPagar || ordenesPorPagar.length === 0) {
+                return res.status(404).json({ mensaje: 'No se encontraron órdenes por pagar' });
+            }
+    
+            const respuesta = {
+                ordenes: []
+            };
+    
+            // Consultar los datos relacionados para cada orden en curso
+            for (const orden of ordenesPorPagar) {
+                // Consultar datos relacionados del cliente
+                const cliente = await db.uno('clientes', orden.cliente_id);
+    
+                // Consultar datos relacionados del vehículo
+                const vehiculo = await db.uno('vehiculos', orden.vehiculo_id);
+    
+                // Consultar datos relacionados del servicio
+                const servicio = await db.uno('servicios', orden.servicio_id);
+    
+                respuesta.ordenes.push({
+                    id: orden.id,
+                    fechaOrden: orden.fecha_orden,
+                    estado: orden.estado,
+                    cliente: cliente[0],
+                    vehiculo: vehiculo[0],
+                    servicio: servicio[0]
+                });
+            }
+    
+            // Enviar la respuesta con las órdenes en curso y sus datos relacionados
+            res.status(200).json(respuesta);
+            console.log(respuesta)
+        } catch (error) {
+            console.error('Error al consultar la información de las órdenes por pagar:', error);
+            next(error);
+        }
     }
 
-    function terminado (req, res, next) {
-        const tabla = 'ordenes'
-        const consulta = { estado: 'terminado' };
-        db.queryEstados(tabla, consulta)
-            .then(items => {
-                respuesta.success(req, res, items, 200);
-            })
-            .catch(err => {
-                next(err);
-            });
+    //estado TERMINADO
+    async function terminado (req, res, next) {
+        const estado = 'por pagar';
+    
+        try {
+            // Consultar las órdenes en curso
+            const ordenesTerminadas = await db.query('ordenes', { estado });
+    
+            // Verificar si hay órdenes en curso
+            if (!ordenesTerminadas || ordenesTerminadas.length === 0) {
+                return res.status(404).json({ mensaje: 'No se encontraron órdenes por pagar' });
+            }
+    
+            const respuesta = {
+                ordenes: []
+            };
+    
+            // Consultar los datos relacionados para cada orden en curso
+            for (const orden of ordenesTerminadas) {
+                // Consultar datos relacionados del cliente
+                const cliente = await db.uno('clientes', orden.cliente_id);
+    
+                // Consultar datos relacionados del vehículo
+                const vehiculo = await db.uno('vehiculos', orden.vehiculo_id);
+    
+                // Consultar datos relacionados del servicio
+                const servicio = await db.uno('servicios', orden.servicio_id);
+    
+                respuesta.ordenes.push({
+                    id: orden.id,
+                    fechaOrden: orden.fecha_orden,
+                    estado: orden.estado,
+                    cliente: cliente[0],
+                    vehiculo: vehiculo[0],
+                    servicio: servicio[0]
+                });
+            }
+    
+            // Enviar la respuesta con las órdenes en curso y sus datos relacionados
+            res.status(200).json(respuesta);
+            console.log(respuesta)
+        } catch (error) {
+            console.error('Error al consultar la información de las órdenes por pagar:', error);
+            next(error);
+        }
     }
     
 

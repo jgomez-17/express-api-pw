@@ -1,8 +1,7 @@
 const TABLA = 'ordenes';
-const {EventEmitter} = require('events');
-const eventEmitter = new EventEmitter();
 
-module.exports = function(dbInyectada){
+
+module.exports = function(dbInyectada, io){
     
     let db = dbInyectada;
 
@@ -47,6 +46,9 @@ module.exports = function(dbInyectada){
           });
 
 
+          // Emitir evento de nueva orden
+          io.emit('nuevaOrden', orden);
+
           console.log('Orden creada correctamente:', orden);
           res.status(200).send('Datos recibidos y guardados correctamente');
         } catch (error) {
@@ -56,11 +58,11 @@ module.exports = function(dbInyectada){
       }
 
       actualizarEstadoOrden = async (req, res) => {
-        const { orderId, newStatus } = req.body;
+        const { orderId, newStatus, employee  } = req.body;
     
         try {
             // Actualizar el estado de la orden en la base de datos
-            await db.actualizarEstadoOrden('ordenes', { estado: newStatus }, { id: orderId });
+            await db.actualizarEstadoOrden('ordenes', { estado: newStatus, empleado: employee }, { id: orderId });
     
             console.log('Estado de la orden actualizado correctamente');
             res.status(200).send('Estado de la orden actualizado correctamente');
@@ -70,21 +72,21 @@ module.exports = function(dbInyectada){
         }
     };
 
-    asignarEmpleado = async (req, res) => {
-      const { orderId, nombreEmpleado } = req.body;
+    actualizarEstadoOrden2 = async (req, res) => {
+      const { orderId, newStatus, metodoPago } = req.body;
   
       try {
-          // Actualizar el estado de la orden en la base de datos
-          await db.actualizarEstadoOrden('ordenes', { empleado: nombreEmpleado }, { id: orderId });
-  
-          console.log('Empleado asignado correctamente');
-          res.status(200).send('Empleado asignado correctamente');
+          // Actualizar el estado de la orden y el método de pago en la base de datos
+          await db.actualizarEstadoOrden('ordenes', { estado: newStatus, metodoDePago: metodoPago }, { id: orderId });
+
+          console.log('Estado de la orden y método de pago actualizados correctamente');
+          res.status(200).send('Estado de la orden y método de pago actualizados correctamente');
       } catch (error) {
-          console.error('Error al asignar empleado:', error);
-          res.status(500).send('Error al asignar empleado');
+          console.error('Error al actualizar el estado de la orden:', error);
+          res.status(500).send('Error al actualizar el estado de la orden');
       }
   };
-      
+
 
 
     function todos () {
@@ -121,7 +123,7 @@ module.exports = function(dbInyectada){
         // eliminar,
         crearOrden,
         actualizarEstadoOrden,
-        asignarEmpleado
+        actualizarEstadoOrden2,
     }
 
 }
