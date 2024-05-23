@@ -42,7 +42,7 @@ module.exports = function(dbInyectada, io){
             cliente_id: cliente.insertId, // Utiliza el ID del cliente insertado
             vehiculo_id: vehiculo.insertId, // Utiliza el ID del vehículo insertado
             servicio_id: servicio.insertId,// Utiliza el ID del servicio insertado
-            estado: 'en curso'
+            estado: 'en espera'
           });
 
 
@@ -57,6 +57,7 @@ module.exports = function(dbInyectada, io){
         }
       }
 
+      //actualiza a en curso e inserta empleados
       actualizarEstadoOrden = async (req, res) => {
         const { orderId, newStatus, employee  } = req.body;
     
@@ -72,6 +73,23 @@ module.exports = function(dbInyectada, io){
         }
     };
 
+    //actualiza a por pagar
+    actualizarEstadoOrden3 = async (req, res) => {
+      const { orderId, newStatus } = req.body;
+  
+      try {
+          // Actualizar el estado de la orden y el método de pago en la base de datos
+          await db.actualizarEstadoOrden('ordenes', { estado: newStatus }, { id: orderId });
+  
+          console.log('Estado de la orden actualizado');
+          res.status(200).send('Estado de la orden actualizado');
+      } catch (error) {
+          console.error('Error al actualizar el estado de la orden:', error);
+          res.status(500).send('Error al actualizar el estado de la orden');
+      }
+  };
+
+    //Actualiza a terminado e inserta metodo de pago
     actualizarEstadoOrden2 = async (req, res) => {
       const { orderId, newStatus, metodoPago } = req.body;
   
@@ -86,6 +104,22 @@ module.exports = function(dbInyectada, io){
           res.status(500).send('Error al actualizar el estado de la orden');
       }
   };
+
+
+  cancelarOrden = async (req, res) => {
+    const { orderId, newStatus } = req.body;
+
+    try {
+        // Actualizar el estado de la orden y el método de pago en la base de datos
+        await db.actualizarEstadoOrden('ordenes', { estado: newStatus }, { id: orderId });
+
+        console.log('Orden cancelada correctamente');
+        res.status(200).send('Orden cancelada correctamente');
+    } catch (error) {
+        console.error('Error al cancelar la orden:', error);
+        res.status(500).send('Error al cancelar la orden');
+    }
+};
 
 
 
@@ -124,6 +158,8 @@ module.exports = function(dbInyectada, io){
         crearOrden,
         actualizarEstadoOrden,
         actualizarEstadoOrden2,
+        actualizarEstadoOrden3,
+        cancelarOrden
     }
 
 }

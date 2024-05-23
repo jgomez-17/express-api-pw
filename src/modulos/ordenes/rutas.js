@@ -10,6 +10,9 @@ router.get('/:id', uno);
 router.post('/', controlador.crearOrden);
 router.post('/actualizarestado', controlador.actualizarEstadoOrden)
 router.post('/actualizarestado2', controlador.actualizarEstadoOrden2)
+router.post('/actualizarestado3', controlador.actualizarEstadoOrden3)
+router.post('/cancelarorden', controlador.cancelarOrden)
+
 
 // router.post('/asignarempleado', controlador.asignarEmpleado)
 // router.put('/', eliminar);

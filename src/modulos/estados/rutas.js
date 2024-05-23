@@ -6,9 +6,11 @@ const controlador = require('./index');
 const router = express.Router();
 
 router.get('/', todos);
+router.get('/enespera', controlador.enEspera);
 router.get('/encurso', controlador.enCurso);
 router.get('/porpagar', controlador.porPagar);
 router.get('/terminado', controlador.terminado)
+router.get('/terminadohoy', controlador.terminadoHoy)
 
 //OPERACIONES CRUD
 
