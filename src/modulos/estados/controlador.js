@@ -145,6 +145,7 @@ module.exports = function(dbInyectada){
                     id: orden.id,
                     fechaOrden: orden.fecha_orden,
                     estado: orden.estado,
+                    empleado: orden.empleado,
                     cliente: cliente[0],
                     vehiculo: vehiculo[0],
                     servicio: servicio[0]
