@@ -77,13 +77,13 @@ function eliminar (tabla, data) {
       });
  }
 
- function queryEstados (tabla, consulta) {
-    return new Promise((resolve, reject) => {
-        conexion.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
-            return error ? reject(error) : resolve(result);   
-        })   
-     });
-}
+//  function queryEstados (tabla, consulta) {
+//     return new Promise((resolve, reject) => {
+//         conexion.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
+//             return error ? reject(error) : resolve(result);   
+//         })   
+//      });
+// }
 
 // function actualizar(tabla, datosActualizados, condicion) {
 //     return new Promise((resolve, reject) => {
@@ -101,6 +101,15 @@ function actualizarEstadoOrden(tabla, datosActualizados, condicion) {
     });
 }
 
+// Nueva función para consultas generales
+function queryGeneral(sql, params) {
+    return new Promise((resolve, reject) => {
+        conexion.query(sql, params, (error, result) => {
+            return error ? reject(error) : resolve(result);
+        });
+    });
+}
+
 
 module.exports = {
     todos,
@@ -108,6 +117,6 @@ module.exports = {
     agregar,
     eliminar,
     query,
-    queryEstados,
-    actualizarEstadoOrden
+    actualizarEstadoOrden,
+    queryGeneral
 }

@@ -11,7 +11,10 @@ const usuarios = require('./modulos/usuarios/rutas');
 const ordenes = require('./modulos/ordenes/rutas')
 const auth = require('./modulos/auth/rutas');
 const vehiculos = require('./modulos/vehiculos/rutas');
-const estados = require('./modulos/estados/rutas')
+const estados = require('./modulos/estados/rutas');
+const lavadores = require('./modulos/lavadores/rutas');
+const usuarios2 = require('./modulos/usuarios2/rutas');
+const estadisticas = require('./modulos/estadisticas/rutas');
 
 
 const app = express();
@@ -49,8 +52,9 @@ app.set('port', config.app.port)
 app.use('/api/ordenes', ordenes);
 app.use('/api/estados', estados);
 app.use('/api/vehiculos', vehiculos);
-// app.use('/api/ordenes', ordenes);
-// app.use('/api/ordenes', ordenes);
+app.use('/api/lavadores', lavadores);
+app.use('/api/estadisticas', estadisticas)
+// app.use('/api/usuarios2', usuarios2);
 
 app.use('/api/usuarios', usuarios);
 app.use('/api/auth', auth);
