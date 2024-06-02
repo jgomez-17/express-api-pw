@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', todos);
 router.get('/:id', uno);
 router.post('/', agregar);
+router.post('/cambiarestadolavador', controlador.cambiarEstadoLavador)
 router.put('/', eliminar);
 
 //OPERACIONES CRUD

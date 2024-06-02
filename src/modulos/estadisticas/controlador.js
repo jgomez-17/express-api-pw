@@ -41,35 +41,22 @@ module.exports = function(dbInyectada, io){
       try {
           // Total de órdenes
           const totalOrdenesQuery = `
-              SELECT COUNT(*) as total
-              FROM ${TABLA}
-              WHERE MONTH(fecha_orden) = ? AND YEAR(fecha_orden) = ?
+            SELECT COUNT(*) as total
+            FROM ${TABLA}
+            WHERE MONTH(fecha_orden) = ? AND YEAR(fecha_orden) = ? AND estado = 'terminado'
           `;
           const totalOrdenesResult = await db.queryGeneral(totalOrdenesQuery, [mes, ano]);
           const totalOrdenes = totalOrdenesResult[0].total;
 
           // Total vendido
           const totalVendidoQuery = `
-              SELECT SUM(s.costo) as total
-              FROM ${TABLA} o
-              JOIN servicios s ON o.servicio_id = s.id
-              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ?
+            SELECT SUM(s.costo) as total
+            FROM ${TABLA} o
+            JOIN servicios s ON o.servicio_id = s.id
+            WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ? AND o.estado = 'terminado'
           `;
           const totalVendidoResult = await db.queryGeneral(totalVendidoQuery, [mes, ano]);
           const totalVendido = totalVendidoResult[0].total;
-
-          // Cliente que generó más ingresos
-          // const clienteTopQuery = `
-          //     SELECT o.cliente_id as cliente, SUM(s.costo) as total
-          //     FROM ${TABLA} o
-          //     JOIN servicios s ON o.servicio_id = s.id
-          //     WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ?
-          //     GROUP BY o.cliente_id
-          //     ORDER BY total DESC
-          //     LIMIT 1
-          // `;
-          // const clienteTopResult = await db.queryGeneral(clienteTopQuery, [mes, ano]);
-          // const clienteTop = clienteTopResult[0];
 
           // Cliente que generó más ingresos
           const clienteTopQuery = `
@@ -77,7 +64,7 @@ module.exports = function(dbInyectada, io){
               FROM ordenes o
               JOIN servicios s ON o.servicio_id = s.id
               JOIN clientes c ON o.cliente_id = c.id
-              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ?
+              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ? AND o.estado = 'terminado'
               GROUP BY c.id
               ORDER BY total DESC
               LIMIT 1
@@ -90,7 +77,7 @@ module.exports = function(dbInyectada, io){
               SELECT DATE(o.fecha_orden) as dia, SUM(s.costo) as total
               FROM ${TABLA} o
               JOIN servicios s ON o.servicio_id = s.id
-              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ?
+              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ? AND o.estado = 'terminado'
               GROUP BY DATE(o.fecha_orden)
               ORDER BY total DESC
               LIMIT 1
@@ -103,7 +90,7 @@ module.exports = function(dbInyectada, io){
               SELECT DATE(o.fecha_orden) as dia, SUM(s.costo) as total
               FROM ${TABLA} o
               JOIN servicios s ON o.servicio_id = s.id
-              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ?
+              WHERE MONTH(o.fecha_orden) = ? AND YEAR(o.fecha_orden) = ? AND o.estado = 'terminado'
               GROUP BY DATE(o.fecha_orden)
               ORDER BY total ASC
               LIMIT 1
