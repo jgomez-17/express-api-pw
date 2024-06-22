@@ -6,56 +6,64 @@ module.exports = function(dbInyectada, io){
     let db = dbInyectada;
 
     if(!db) {
-        db = require('../../db/mysql');
+        db = require('../../db/postgree');
     }
 
-    //funcion para crear la orden
     crearOrden = async (req, res) => {
-        const dataOrden = req.body.data;
-      
-        try {
-          // Insertar datos del cliente
-          const cliente = await db.agregar('clientes', {
-            nombre: dataOrden.nombre,
-            celular: dataOrden.celular,
-            correo: dataOrden.correo
-          });
-      
+      const dataOrden = req.body.data;
+      console.log(req.body.data);
+  
+      try {
           // Inserta los datos del vehículo
           const vehiculo = await db.agregar('vehiculos', {
-            placa: dataOrden.placa,
-            marca: dataOrden.marca,
-            tipo: dataOrden.tipo,
-            color: dataOrden.color,
-            llaves: dataOrden.llaves,
-            observaciones: dataOrden.observaciones
+              placa: dataOrden.placa,
+              marca: dataOrden.marca,
+              tipo: dataOrden.tipo,
+              color: dataOrden.color,
+              llaves: dataOrden.llaves,
+              observaciones: dataOrden.observaciones
           });
-      
+  
+          if (!vehiculo || !vehiculo.id) {
+              throw new Error('No se pudo obtener el ID del vehículo insertado');
+          }
+  
+          // Insertar datos del cliente
+          const cliente = await db.agregar('clientes', {
+              nombre: dataOrden.nombre,
+              celular: dataOrden.celular,
+              correo: dataOrden.correo
+          });
+  
+          if (!cliente || !cliente.id) {
+              throw new Error('No se pudo obtener el ID del cliente insertado');
+          }
+  
           // Inserta los datos del servicio
           const servicio = await db.agregar('servicios', {
-            nombre_servicios: dataOrden.nombre_servicios,
-            costo: dataOrden.costo
+              nombre_servicios: dataOrden.nombre_servicios,
+              costo: dataOrden.costo
           });
-      
+  
+          if (!servicio || !servicio.id) {
+              throw new Error('No se pudo obtener el ID del servicio insertado');
+          }
+  
           // Inserta los datos de la orden
           const orden = await db.agregar('ordenes', {
-            cliente_id: cliente.insertId, // Utiliza el ID del cliente insertado
-            vehiculo_id: vehiculo.insertId, // Utiliza el ID del vehículo insertado
-            servicio_id: servicio.insertId,// Utiliza el ID del servicio insertado
-            estado: 'en espera'
+              cliente_id: cliente.id,
+              vehiculo_id: vehiculo.id,
+              servicio_id: servicio.id,
+              estado: 'en espera'
           });
-
-
-          // Emitir evento de nueva orden
-          io.emit('nuevaOrden', orden);
-
+  
           console.log('Orden creada correctamente:', orden);
           res.status(200).send('Datos recibidos y guardados correctamente');
-        } catch (error) {
+      } catch (error) {
           console.error('Error al procesar la orden:', error);
           res.status(500).send('Error al procesar la orden');
-        }
       }
+    }  
 
     //actualiza a en curso e inserta empleados
     actualizarEstadoOrden = async (req, res) => {

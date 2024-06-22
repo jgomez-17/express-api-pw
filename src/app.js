@@ -15,6 +15,7 @@ const estados = require('./modulos/estados/rutas');
 const lavadores = require('./modulos/lavadores/rutas');
 const usuarios2 = require('./modulos/usuarios2/rutas');
 const estadisticas = require('./modulos/estadisticas/rutas');
+const acumulados = require('./modulos/acumulados/rutas');
 
 
 const app = express();
@@ -54,11 +55,11 @@ app.use('/api/estados', estados);
 app.use('/api/vehiculos', vehiculos);
 app.use('/api/lavadores', lavadores);
 app.use('/api/estadisticas', estadisticas)
-// app.use('/api/usuarios2', usuarios2);
-
 app.use('/api/usuarios', usuarios);
 app.use('/api/auth', auth);
+app.use('/api/acumulados', acumulados);
 
+// app.use('/api/usuarios2', usuarios2);
 // app.post('/api/ordens', ordenes2); esta es un modulo de prueba
 
 app.use(error);

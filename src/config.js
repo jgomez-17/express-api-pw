@@ -13,5 +13,13 @@ module.exports = {
         password: process.env.DB_PASSWORD || '',
         database: process.env.DB_DATABASE || 'ejemplo',
 
+    },
+
+    postgree: {
+        host: process.env.POSTGREE_DB_HOST || 'localhost',
+        port: process.env.POSTGREE_DB_PORT || '5432',
+        user: process.env.POSTGREE_DB_USER || 'root',
+        password: process.env.POSTGREE_DB_PASSWORD || '',
+        database: process.env.POSTGREE_DB_DATABASE || 'ejemplo',
     }
 }

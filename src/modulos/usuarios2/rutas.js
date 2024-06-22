@@ -10,7 +10,7 @@ router.get('/', todos);
 router.get('/:id', uno);
 router.post('/', agregar);
 router.put('/', eliminar);
-router.post('/login', controlador.login)
+router.post('/verificarusuario', controlador.verificarUsuario)
 
 //OPERACIONES CRUD
 async function todos (req, res, next) {

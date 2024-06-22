@@ -54,4 +54,5 @@ async function eliminar (req, res, next) {
         next(err);
     }
 };
+
 module.exports = router;

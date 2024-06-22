@@ -72,18 +72,18 @@ function eliminar (tabla, data) {
  function query (tabla, consulta) {
      return new Promise((resolve, reject) => {
          conexion.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
-             return error ? reject(error) : resolve(result);   
+             return error ? reject(error) : resolve(result[0]);   
          })   
       });
  }
 
-//  function queryEstados (tabla, consulta) {
-//     return new Promise((resolve, reject) => {
-//         conexion.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
-//             return error ? reject(error) : resolve(result);   
-//         })   
-//      });
-// }
+  function queryEstados (tabla, consulta) {
+     return new Promise((resolve, reject) => {
+         conexion.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
+             return error ? reject(error) : resolve(result);   
+         })   
+      });
+ }
 
 // function actualizar(tabla, datosActualizados, condicion) {
 //     return new Promise((resolve, reject) => {
@@ -110,6 +110,17 @@ function queryGeneral(sql, params) {
     });
 }
 
+// Nueva función para buscar por usuario
+function buscarPorUsuario(tabla, usuario) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM ${tabla} WHERE usuario = ?`;
+        conexion.query(query, [usuario], (error, result) => {
+            return error ? reject(error) : resolve(result[0]);
+        });
+    });
+}
+
+
 
 module.exports = {
     todos,
@@ -117,6 +128,8 @@ module.exports = {
     agregar,
     eliminar,
     query,
+    queryEstados,
     actualizarEstadoOrden,
-    queryGeneral
+    queryGeneral,
+    buscarPorUsuario
 }

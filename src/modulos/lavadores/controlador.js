@@ -5,7 +5,7 @@ module.exports = function(dbInyectada){
     let db = dbInyectada;
 
     if(!db) {
-        db = require('../../db/mysql');
+        db = require('../../db/postgree');
     }
 
     function todos () {
