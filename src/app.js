@@ -59,6 +59,11 @@ app.use('/api/usuarios', usuarios);
 app.use('/api/auth', auth);
 app.use('/api/acumulados', acumulados);
 
+app.get('/hora', (req, res) => {
+    const now = new Date();
+    res.send(`La hora actual del servidor es: ${now.toLocaleString()}`);
+});
+
 // app.use('/api/usuarios2', usuarios2);
 // app.post('/api/ordens', ordenes2); esta es un modulo de prueba
 
