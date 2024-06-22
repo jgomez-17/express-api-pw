@@ -5,7 +5,7 @@ const postgreconfig = {
     connectionString: process.env.DATABASE_URL,
     timezone: 'America/Bogota', 
     ssl: {
-        rejectUnauthorized: true
+        rejectUnauthorized: false
     }
 };
 
