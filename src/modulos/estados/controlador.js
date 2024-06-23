@@ -1,6 +1,8 @@
 const { format } = require('date-fns');
 const TABLA = 'ordenes';
 const respuesta = require('../../red/respuestas');
+const moment = require('moment-timezone');
+
 
 module.exports = function(dbInyectada){
     
@@ -207,7 +209,80 @@ module.exports = function(dbInyectada){
         }
     }
 
-      // Estado TERMINADO HOY 2
+    async function terminadoHoy(req, res, next) {
+        const estado = 'terminado';
+    
+        try {
+            // Consultar todas las órdenes terminadas
+            const ordenesTerminadas = await db.queryEstados('ordenes', { estado });
+    
+            // Verificar si hay órdenes terminadas
+            if (!ordenesTerminadas || ordenesTerminadas.length === 0) {
+                return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas' });
+            }
+    
+            // Obtener la fecha actual en formato YYYY-MM-DD
+            const today = format(new Date(), 'yyyy-MM-dd');
+    
+            const respuesta = {
+                ordenes: [],
+                totalRecaudado: 0,
+                numeroOrdenesHoy: 0,
+                totalEfectivo: 0, // Inicializar el total pagado en efectivo
+                totalNequi: 0,
+                totalBancolombia: 0
+            };
+    
+            // Consultar los datos relacionados para cada orden terminada y filtrar por fecha actual
+            for (const orden of ordenesTerminadas) {
+                const fechaOrden = format(new Date(orden.fecha_orden), 'yyyy-MM-dd');
+                if (fechaOrden === today) {
+                    
+                    const cliente = await db.uno('clientes', orden.cliente_id);
+                    const vehiculo = await db.uno('vehiculos', orden.vehiculo_id);
+                    const servicio = await db.uno('servicios', orden.servicio_id);
+        
+                    respuesta.ordenes.push({
+                        id: orden.id,
+                        fechaOrden: orden.fecha_orden,
+                        estado: orden.estado,
+                        empleado: orden.empleado,
+                        metododepago: orden.metododepago, // Asegúrate de que este nombre coincide con el nombre de la columna en tu tabla
+                        cliente: cliente[0],
+                        vehiculo: vehiculo[0],
+                        servicio: servicio[0]
+                    });
+    
+                    // Sumar el costo del servicio al total recaudado
+                    const costoServicio = parseFloat(servicio[0].costo);
+                    respuesta.totalRecaudado += costoServicio;
+                    respuesta.numeroOrdenesHoy += 1;
+    
+                    // Sumar al total pagado según el método de pago
+                    if (orden.metododepago === 'Efectivo') {
+                        respuesta.totalEfectivo += costoServicio;
+                    } else if (orden.metododepago === 'Nequi') {
+                        respuesta.totalNequi += costoServicio;
+                    } else if (orden.metododepago === 'Bancolombia') {
+                        respuesta.totalBancolombia += costoServicio;
+                    }
+                }
+            }
+    
+            // Verificar si hay órdenes terminadas para el día actual
+            if (respuesta.ordenes.length === 0) {
+                return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas para el día actual' });
+            }
+    
+            // Enviar la respuesta con las órdenes terminadas del día actual y sus datos relacionados
+            res.status(200).json(respuesta);
+        } catch (error) {
+            console.error('Error al consultar la información de las órdenes terminadas:', error);
+            next(error);
+        }
+    }
+
+    // Estado TERMINADO HOY 2
     // async function terminadoHoy2(req, res, next) {
     //     const estado = 'terminado';
     
@@ -281,79 +356,79 @@ module.exports = function(dbInyectada){
     //     }
     // }
 
-    async function terminadoHoy(req, res, next) {
-        const estado = 'terminado';
+    // async function terminadoHoy(req, res, next) {
+    //     const estado = 'terminado';
     
-        try {
-            // Consultar todas las órdenes terminadas
-            const ordenesTerminadas = await db.queryEstados('ordenes', { estado });
+    //     try {
+    //         // Consultar todas las órdenes terminadas
+    //         const ordenesTerminadas = await db.queryEstados('ordenes', { estado });
     
-            // Verificar si hay órdenes terminadas
-            if (!ordenesTerminadas || ordenesTerminadas.length === 0) {
-                return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas' });
-            }
+    //         // Verificar si hay órdenes terminadas
+    //         if (!ordenesTerminadas || ordenesTerminadas.length === 0) {
+    //             return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas' });
+    //         }
     
-            // Obtener la fecha actual en formato YYYY-MM-DD
-            const today = format(new Date(), 'yyyy-MM-dd');
+    //         // Obtener la fecha actual en formato YYYY-MM-DD
+    //         const today = format(new Date(), 'yyyy-MM-dd');
     
-            const respuesta = {
-                ordenes: [],
-                totalRecaudado: 0,
-                numeroOrdenesHoy: 0,
-                totalEfectivo: 0, // Inicializar el total pagado en efectivo
-                // totalTransferencia: 0,
-                totalNequi: 0,
-                totalBancolombia: 0
-            };
+    //         const respuesta = {
+    //             ordenes: [],
+    //             totalRecaudado: 0,
+    //             numeroOrdenesHoy: 0,
+    //             totalEfectivo: 0, // Inicializar el total pagado en efectivo
+    //             // totalTransferencia: 0,
+    //             totalNequi: 0,
+    //             totalBancolombia: 0
+    //         };
     
-            // Consultar los datos relacionados para cada orden terminada y filtrar por fecha actual
-            for (const orden of ordenesTerminadas) {
-                const fechaOrden = format(new Date(orden.fecha_orden), 'yyyy-MM-dd');
-                if (fechaOrden === today) {
+    //         // Consultar los datos relacionados para cada orden terminada y filtrar por fecha actual
+    //         for (const orden of ordenesTerminadas) {
+    //             const fechaOrden = format(new Date(orden.fecha_orden), 'yyyy-MM-dd');
+    //             if (fechaOrden === today) {
                     
-                    const cliente = await db.uno('clientes', orden.cliente_id);
-                    const vehiculo = await db.uno('vehiculos', orden.vehiculo_id);
-                    const servicio = await db.uno('servicios', orden.servicio_id);
+    //                 const cliente = await db.uno('clientes', orden.cliente_id);
+    //                 const vehiculo = await db.uno('vehiculos', orden.vehiculo_id);
+    //                 const servicio = await db.uno('servicios', orden.servicio_id);
         
-                    respuesta.ordenes.push({
-                        id: orden.id,
-                        fechaOrden: orden.fecha_orden,
-                        estado: orden.estado,
-                        empleado: orden.empleado,
-                        metododepago: orden.metododepago, // Asegúrate de que este nombre coincide con el nombre de la columna en tu tabla
-                        cliente: cliente[0],
-                        vehiculo: vehiculo[0],
-                        servicio: servicio[0]
-                    });
+    //                 respuesta.ordenes.push({
+    //                     id: orden.id,
+    //                     fechaOrden: orden.fecha_orden,
+    //                     estado: orden.estado,
+    //                     empleado: orden.empleado,
+    //                     metododepago: orden.metododepago, // Asegúrate de que este nombre coincide con el nombre de la columna en tu tabla
+    //                     cliente: cliente[0],
+    //                     vehiculo: vehiculo[0],
+    //                     servicio: servicio[0]
+    //                 });
     
-                    // Sumar el costo del servicio al total recaudado
-                    const costoServicio = parseFloat(servicio[0].costo);
-                    respuesta.totalRecaudado += costoServicio;
-                    respuesta.numeroOrdenesHoy += 1;
+    //                 // Sumar el costo del servicio al total recaudado
+    //                 const costoServicio = parseFloat(servicio[0].costo);
+    //                 respuesta.totalRecaudado += costoServicio;
+    //                 respuesta.numeroOrdenesHoy += 1;
     
-                    // Sumar al total pagado según el método de pago
-                    if (orden.metododepago === 'Efectivo') {
-                        respuesta.totalEfectivo += costoServicio;
-                    } else if (orden.metododepago === 'Nequi') {
-                        respuesta.totalNequi += costoServicio;
-                    } else if (orden.metododepago === 'Bancolombia') {
-                        respuesta.totalBancolombia += costoServicio;
-                    }
-                }
-            }
+    //                 // Sumar al total pagado según el método de pago
+    //                 if (orden.metododepago === 'Efectivo') {
+    //                     respuesta.totalEfectivo += costoServicio;
+    //                 } else if (orden.metododepago === 'Nequi') {
+    //                     respuesta.totalNequi += costoServicio;
+    //                 } else if (orden.metododepago === 'Bancolombia') {
+    //                     respuesta.totalBancolombia += costoServicio;
+    //                 }
+    //             }
+    //         }
     
-            // Verificar si hay órdenes terminadas para el día actual
-            if (respuesta.ordenes.length === 0) {
-                return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas para el día actual' });
-            }
+    //         // Verificar si hay órdenes terminadas para el día actual
+    //         if (respuesta.ordenes.length === 0) {
+    //             return res.status(404).json({ mensaje: 'No se encontraron órdenes terminadas para el día actual' });
+    //         }
     
-            // Enviar la respuesta con las órdenes terminadas del día actual y sus datos relacionados
-            res.status(200).json(respuesta);
-        } catch (error) {
-            console.error('Error al consultar la información de las órdenes terminadas:', error);
-            next(error);
-        }
-    }
+    //         // Enviar la respuesta con las órdenes terminadas del día actual y sus datos relacionados
+    //         res.status(200).json(respuesta);
+    //     } catch (error) {
+    //         console.error('Error al consultar la información de las órdenes terminadas:', error);
+    //         next(error);
+    //     }
+    // }
     
     
 
