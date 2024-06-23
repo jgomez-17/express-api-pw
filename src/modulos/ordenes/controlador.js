@@ -1,5 +1,5 @@
 const TABLA = 'ordenes';
-
+const { format, zonedTimeToUtc } = require('date-fns-tz');
 
 module.exports = function(dbInyectada, io){
     
@@ -14,6 +14,9 @@ module.exports = function(dbInyectada, io){
       console.log(req.body.data);
   
       try {
+
+          const fechaCol = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/Bogota' });
+
           // Inserta los datos del vehículo
           const vehiculo = await db.agregar('vehiculos', {
               placa: dataOrden.placa,
@@ -48,13 +51,16 @@ module.exports = function(dbInyectada, io){
           if (!servicio || !servicio.id) {
               throw new Error('No se pudo obtener el ID del servicio insertado');
           }
+
+          // Obtener la fecha y hora actual en formato ISO (UTC)
   
           // Inserta los datos de la orden
           const orden = await db.agregar('ordenes', {
               cliente_id: cliente.id,
               vehiculo_id: vehiculo.id,
               servicio_id: servicio.id,
-              estado: 'en espera'
+              estado: 'en espera',
+              fecha_orden: fechaCol // Asignar la fecha de la orden
           });
   
           console.log('Orden creada correctamente:', orden);
