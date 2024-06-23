@@ -20,6 +20,9 @@ const acumulados = require('./modulos/acumulados/rutas');
 
 const app = express();
 
+// Configuración de la zona horaria
+process.env.TZ = 'America/Bogota';
+
 //Socket.io
 const server = http.createServer(app);
 const io = socketIo(server);
