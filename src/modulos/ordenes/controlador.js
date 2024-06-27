@@ -45,7 +45,8 @@ module.exports = function(dbInyectada, io){
           // Inserta los datos del servicio
           const servicio = await db.agregar('servicios', {
               nombre_servicios: dataOrden.nombre_servicios,
-              costo: dataOrden.costo
+              costo: dataOrden.costo,
+              descuento: dataOrden.descuento
           });
   
           if (!servicio || !servicio.id) {

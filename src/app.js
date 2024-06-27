@@ -13,9 +13,9 @@ const auth = require('./modulos/auth/rutas');
 const vehiculos = require('./modulos/vehiculos/rutas');
 const estados = require('./modulos/estados/rutas');
 const lavadores = require('./modulos/lavadores/rutas');
-const usuarios2 = require('./modulos/usuarios2/rutas');
 const estadisticas = require('./modulos/estadisticas/rutas');
 const acumulados = require('./modulos/acumulados/rutas');
+const clientes = require('./modulos/clientes/rutas');
 
 
 const app = express();
@@ -61,6 +61,7 @@ app.use('/api/estadisticas', estadisticas)
 app.use('/api/usuarios', usuarios);
 app.use('/api/auth', auth);
 app.use('/api/acumulados', acumulados);
+app.use('/api/clientes', clientes);
 
 app.get('/hora', (req, res) => {
     const now = new Date();

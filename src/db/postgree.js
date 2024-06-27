@@ -4,9 +4,9 @@ const config = require('../config');
 const postgreconfig = {
     connectionString: process.env.DATABASE_URL,
     timezone: 'America/Bogota', 
-      ssl: {
-          rejectUnauthorized: false
-      }
+    //   ssl: {
+    //       rejectUnauthorized: false
+    //   }
 };
 
 let pool;
