@@ -6,6 +6,7 @@ const router = express.Router();
 
 // RUTAS
 router.get('/', todos);
+router.get('/acumuladosdelmes', controlador.obtenerRegistrosMesActual)
 router.get('/:id', uno);
 router.post('/insertaracumulados', controlador.insertarAcumulados);
 
@@ -28,5 +29,6 @@ async function uno(req, res, next) {
         next(err);
     }
 }
+
 
 module.exports = router;

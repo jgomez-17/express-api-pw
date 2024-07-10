@@ -87,7 +87,37 @@ module.exports = function(dbInyectada, io){
             res.status(500).json({ error: 'Error al insertar acumulados' });
         }
     }
+ 
+    async function obtenerRegistrosMesActual(req, res, next) {
+        try {
+            // Obtener la fecha actual en la zona horaria local
+            const fechaActualLocal = moment().tz(ZONA_HORARIA_LOCAL);
 
+            // Obtener el primer día del mes actual en UTC
+            const primerDiaMesActual = fechaActualLocal.clone().startOf('month').tz('UTC').format('YYYY-MM-DD');
+            
+            // Obtener el último día del mes actual en UTC
+            const ultimoDiaMesActual = fechaActualLocal.clone().endOf('month').tz('UTC').format('YYYY-MM-DD');
+            
+            // Construir la consulta para obtener los registros del mes actual
+            const consulta = {
+                condition: 'DATE(fecha) >= $1 AND DATE(fecha) <= $2',
+                values: [primerDiaMesActual, ultimoDiaMesActual]
+            };
+            
+            // Realizar la consulta utilizando la función query3
+            const registrosMesActual = await db.query3(TABLA, consulta);
+
+            // Responder al cliente con los registros del mes actual
+            res.status(200).json(registrosMesActual);
+        } catch (err) {
+            // Manejar errores
+            console.error('Error al obtener registros del mes actual:', err);
+            res.status(500).json({ error: 'Error al obtener registros del mes actual' });
+        }
+    }
+
+    
     
     return {
         todos,
@@ -96,5 +126,6 @@ module.exports = function(dbInyectada, io){
         eliminar,
         query,
         insertarAcumulados,
+        obtenerRegistrosMesActual
     }
 }
