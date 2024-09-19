@@ -230,7 +230,8 @@ module.exports = function(dbInyectada){
                 numeroOrdenesHoy: 0,
                 totalEfectivo: 0, // Inicializar el total pagado en efectivo
                 totalNequi: 0,
-                totalBancolombia: 0
+                totalBancolombia: 0,
+                totalDaviplata: 0
             };
     
             // Consultar los datos relacionados para cada orden terminada y filtrar por fecha actual
@@ -265,6 +266,8 @@ module.exports = function(dbInyectada){
                         respuesta.totalNequi += costoServicio;
                     } else if (orden.metododepago === 'Bancolombia') {
                         respuesta.totalBancolombia += costoServicio;
+                    } else if (orden.metododepago === 'Daviplata') {
+                        respuesta.totalDaviplata += costoServicio;
                     }
                 }
             }

@@ -17,7 +17,6 @@ const estadisticas = require('./modulos/estadisticas/rutas');
 const acumulados = require('./modulos/acumulados/rutas');
 const clientes = require('./modulos/clientes/rutas');
 
-
 const app = express();
 
 // Configuración de la zona horaria

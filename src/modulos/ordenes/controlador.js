@@ -63,6 +63,7 @@ module.exports = function(dbInyectada, io){
               estado: 'en espera',
               fecha_orden: fechaCol // Asignar la fecha de la orden
           });
+
   
           console.log('Orden creada correctamente:', orden);
           res.status(200).send('Datos recibidos y guardados correctamente');
